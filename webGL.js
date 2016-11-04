@@ -60,104 +60,118 @@ function init() {
 	//
 	// Buffers
 	//
-	var boxVerticies =
-	[
-	//	x	 y 	  z,   r, g, b
-		// Front face
-		-1.0, -1.0,  1.0, 1, 0, 0,
-		 1.0, -1.0,  1.0, 0, .5, .5,
-		 1.0,  1.0,  1.0, 1, 0, 1,
-		-1.0,  1.0,  1.0, 0, 1, 1,
+	var boxVertices = 
+	[ // X, Y, Z           U, V
+		// Top
+		-1.0, 1.0, -1.0,   0, 0,
+		-1.0, 1.0,  1.0,    0, 1,
+		 1.0, 1.0,  1.0,     1, 1,
+		 1.0, 1.0, -1.0,    1, 0,
 
-		// Back face
-		-1.0, -1.0, -1.0, 1, 1, 0,
-		-1.0,  1.0, -1.0, 0, 1, 0,
-		 1.0,  1.0, -1.0, 0, 0, 1,
-		 1.0, -1.0, -1.0, .5, .5, 0,
+		// Left
+		-1.0,  1.0,  1.0, 0, 0,
+		-1.0, -1.0,  1.0, 1, 0,
+		-1.0, -1.0, -1.0, 1, 1,
+		-1.0,  1.0, -1.0, 0, 1,
 
-		// Top face
-		-1.0,  1.0, -1.0, 0, 1, 0,
-		-1.0,  1.0,  1.0, 0, 1, 1,
-		 1.0,  1.0,  1.0, 1, 0, 1,
-		 1.0,  1.0, -1.0, 0, 0, 1,
+		// Right
+		1.0,  1.0,  1.0, 1, 1,
+		1.0, -1.0,  1.0, 0, 1,
+		1.0, -1.0, -1.0, 0, 0,
+		1.0,  1.0, -1.0, 1, 0,
 
-		// Bottom face
-		-1.0, -1.0, -1.0, 1, 1, 0,
-		 1.0, -1.0, -1.0, .5, .5, 0,
-		 1.0, -1.0,  1.0, 0, .5, .5,
-		-1.0, -1.0,  1.0, 1, 0, 0,
+		// Front
+		 1.0,  1.0, 1.0, 1, 1,
+		 1.0, -1.0, 1.0, 1, 0,
+		-1.0, -1.0, 1.0, 0, 0,
+		-1.0,  1.0, 1.0, 0, 1,
 
-		// Right face
-		1.0, -1.0, -1.0, .5, .5, 0,
-		1.0,  1.0, -1.0, 0, 0, 1,
-		1.0,  1.0,  1.0, 1, 0, 1,
-		1.0, -1.0,  1.0, 0, .5, .5,
+		// Back
+		 1.0,  1.0, -1.0, 0, 0,
+		 1.0, -1.0, -1.0, 0, 1,
+		-1.0, -1.0, -1.0, 1, 1,
+		-1.0,  1.0, -1.0, 1, 0,
 
-		// Left face
-		-1.0, -1.0, -1.0, 1, 1, 0,
-		-1.0, -1.0,  1.0, 1, 0, 0,
-		-1.0,  1.0,  1.0, 0, 1, 1,
-		-1.0,  1.0, -1.0, 0, 1, 0,
+		// Bottom
+		-1.0, -1.0, -1.0, 1, 1,
+		-1.0, -1.0,  1.0, 1, 0,
+		 1.0, -1.0,  1.0, 0, 0,
+		 1.0, -1.0, -1.0, 0, 1,
 	];
 
-	var boxIndicies =
+	var boxIndices =
 	[
-		// front
-		0,  1,  2,
-		0,  2,  3,
+		// Top
+		0, 1, 2,
+		0, 2, 3,
 
-		// back
-		4,  5,  6,
-		4,  6,  7,
+		// Left
+		5, 4, 6,
+		6, 4, 7,
 
-		// top
-		8,  9,  10,
-		8,  10, 11,
+		// Right
+		8, 9, 10,
+		8, 10, 11,
 
-		// bottom
-		12, 13, 14,
-		12, 14, 15,
+		// Front
+		13, 12, 14,
+		15, 14, 12,
 
-		// right
+		// Back
 		16, 17, 18,
 		16, 18, 19,
 
-		// left
-		20, 21, 22,
-		20, 22, 23
+		// Bottom
+		21, 20, 22,
+		22, 20, 23
 	];
-
 	var boxVertexBufferObject = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferObject);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxVerticies), gl.STATIC_DRAW);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxVertices), gl.STATIC_DRAW);
 
 	var boxIndexBufferObject = gl.createBuffer();
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
-	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(boxIndicies), gl.STATIC_DRAW);
+	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(boxIndices), gl.STATIC_DRAW);
 
 	var positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
-	var colorAttribLocation = gl.getAttribLocation(program, 'vertColor');
+	var texCoordAttribLocation = gl.getAttribLocation(program, 'vertTexCoord');
 	
 	gl.vertexAttribPointer(
 		positionAttribLocation,
 		3,
 		gl.FLOAT,
 		gl.FALSE,
-		6 * Float32Array.BYTES_PER_ELEMENT,
+		5 * Float32Array.BYTES_PER_ELEMENT,
 		0
 	);
 
 	gl.vertexAttribPointer(
-		colorAttribLocation,
-		3,
+		texCoordAttribLocation,
+		2,
 		gl.FLOAT,
 		gl.FALSE,
-		6 * Float32Array.BYTES_PER_ELEMENT,
+		5 * Float32Array.BYTES_PER_ELEMENT,
 		3 * Float32Array.BYTES_PER_ELEMENT
 	);
 
 	gl.enableVertexAttribArray(positionAttribLocation);
-	gl.enableVertexAttribArray(colorAttribLocation);
+	gl.enableVertexAttribArray(texCoordAttribLocation);
+
+	//
+	// Create texture
+	//
+	var boxTexture = gl.createTexture();
+	gl.bindTexture(gl.TEXTURE_2D, boxTexture);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+	gl.texImage2D(
+		gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,
+		gl.UNSIGNED_BYTE,
+		document.getElementById('box-texture')
+	);
+	gl.bindTexture(gl.TEXTURE_2D, null);
 
 	// Tell WebGL which program should be active
 	gl.useProgram(program);
@@ -199,7 +213,11 @@ function init() {
 
 		gl.clearColor(0.5, 0.5, 0.5, 1.0);
 		gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
-		gl.drawElements(gl.TRIANGLES, boxIndicies.length, gl.UNSIGNED_SHORT, 0);
+
+		gl.bindTexture(gl.TEXTURE_2D, boxTexture);
+		gl.activeTexture(gl.TEXTURE0);
+
+		gl.drawElements(gl.TRIANGLES, boxIndices.length, gl.UNSIGNED_SHORT, 0);
 		requestAnimationFrame(loop);
 	};
 	requestAnimationFrame(loop);

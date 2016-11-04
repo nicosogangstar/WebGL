@@ -2,26 +2,28 @@
     <head>
         <script id="vertexshader" type="x-shader">
             attribute vec3 vertPosition;
-            attribute vec3 vertColor;
+            attribute vec2 vertTexCoord;
 
-            varying vec3 fragColor;
+            varying vec2 fragTexCoord;
 
             uniform mat4 mWorld;
             uniform mat4 mView;
             uniform mat4 mProj;
 
             void main() {
-                fragColor = vertColor;
+            	fragTexCoord = vertTexCoord;
                 gl_Position = mProj * mView * mWorld * vec4(vertPosition, 1.0);
             }
         </script>
         <script id="fragmentshader" type="x-shader">
             precision highp float;
 
-            varying vec3 fragColor;
+            varying vec2 fragTexCoord;
+            uniform sampler2D sampler;
+
 
             void main() {
-                gl_FragColor = vec4(fragColor, 1.0);
+                gl_FragColor = texture2D(sampler, fragTexCoord);
             }
         </script>
     </head>
@@ -30,6 +32,8 @@
             <canvas id="canvas" width="800" height="600"></canvas>
         </div>
 
+        <img id="box-texture" src="texture.png" width="0" height="0"/>
+        
         <script type="text/javascript" src="webGL.js"></script> 
         <script type="text/javascript" src="gl-matrix-min.js"></script> 
     </body>
