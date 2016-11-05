@@ -86,6 +86,7 @@ var runGl = function(modelObject, imageObject) {
 	var modelVertices = modelObject.meshes[0].vertices;
 	var modelIndices = [].concat.apply([], modelObject.meshes[0].faces);
 	var modelTexCoords = modelObject.meshes[0].texturecoords[0];
+	var modelNormals = modelObject.meshes[0].normals;
 
 	var modelVertexBufferObject = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, modelVertexBufferObject);
@@ -98,6 +99,10 @@ var runGl = function(modelObject, imageObject) {
 	var modelIndexBufferObject = gl.createBuffer();
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, modelIndexBufferObject);
 	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(modelIndices), gl.STATIC_DRAW);
+
+	var modelNormalsBufferObject = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, modelNormalsBufferObject);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(modelNormals), gl.STATIC_DRAW);
 
 	gl.bindBuffer(gl.ARRAY_BUFFER, modelVertexBufferObject);
 	var positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
@@ -123,6 +128,17 @@ var runGl = function(modelObject, imageObject) {
 	);
 	gl.enableVertexAttribArray(texCoordAttribLocation);
 
+	gl.bindBuffer(gl.ARRAY_BUFFER, modelNormalsBufferObject);
+	var normalAttribLocation = gl.getAttribLocation(program, 'vertNormal');
+	gl.vertexAttribPointer(
+		normalAttribLocation,
+		3,
+		gl.FLOAT,
+		gl.TRUE,
+		3 * Float32Array.BYTES_PER_ELEMENT,
+		0
+	);
+	gl.enableVertexAttribArray(normalAttribLocation);
 	//
 	// Create texture
 	//
@@ -140,12 +156,10 @@ var runGl = function(modelObject, imageObject) {
 	);
 	gl.bindTexture(gl.TEXTURE_2D, null);
 
-	// Tell WebGL which program should be active
-	gl.useProgram(program);
-
 	//
 	// Transforms
 	//
+	gl.useProgram(program);
 	var matWorldUniformLocation = gl.getUniformLocation(program, 'mWorld');
 	var matViewUniformLocation = gl.getUniformLocation(program, 'mView');
 	var matProjUniformLocation = gl.getUniformLocation(program, 'mProj');
@@ -161,6 +175,18 @@ var runGl = function(modelObject, imageObject) {
 	gl.uniformMatrix4fv(matViewUniformLocation, gl.FALSE, viewMatrix);
 	gl.uniformMatrix4fv(matProjUniformLocation, gl.FALSE, projMatrix);
 
+	//
+	// Lighting
+	//
+	gl.useProgram(program);
+	var ambientUniformLocation = gl.getUniformLocation(program, 'ambientLightIntensity');
+	var sunIntUniformLocation = gl.getUniformLocation(program, 'sunLightIntensity');
+	var sunDirUniformLocation = gl.getUniformLocation(program, 'sunLightDirection');
+	
+	gl.uniform3f(ambientUniformLocation, 0.2, 0.2, 0.2);
+	gl.uniform3f(sunDirUniformLocation, 3.0, 4.0, -2.0);
+	gl.uniform3f(sunIntUniformLocation, 0.9, 0.9, 0.9);
+	
 	//
 	// Main loop
 	//
