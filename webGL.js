@@ -6,7 +6,7 @@ var initWebGL = function() {
 		}
 		else {
 			// TODO
-			loadImage('texture.png', function(imgErr, imageObject){
+			loadImage('/models/cone.png', function(imgErr, imageObject){
 				if(imgErr) {
 					alert('Fatal error getting model textures');
 					console.error(imgErr);
@@ -23,8 +23,7 @@ var runGl = function(modelObject, imageObject) {
 	//
 	// Setup
 	//
-	var model = modelObject;
-	console.log(model);
+	console.log(modelObject);
 
 	var canvas = document.getElementById("canvas");
 	var gl = canvas.getContext('webgl');
@@ -84,108 +83,52 @@ var runGl = function(modelObject, imageObject) {
 	//
 	// Buffers
 	//
-	var boxVertices = 
-	[ // X, Y, Z         U, V
-		// Top
-		-1.0, 1.0, -1.0, 0, 0,
-		-1.0, 1.0,  1.0, 0, 1,
-		 1.0, 1.0,  1.0, 1, 1,
-		 1.0, 1.0, -1.0, 1, 0,
+	var modelVertices = modelObject.meshes[0].vertices;
+	var modelIndices = [].concat.apply([], modelObject.meshes[0].faces);
+	var modelTexCoords = modelObject.meshes[0].texturecoords[0];
 
-		// Left
-		-1.0,  1.0,  1.0, 0, 0,
-		-1.0, -1.0,  1.0, 1, 0,
-		-1.0, -1.0, -1.0, 1, 1,
-		-1.0,  1.0, -1.0, 0, 1,
+	var modelVertexBufferObject = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, modelVertexBufferObject);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(modelVertices), gl.STATIC_DRAW);
 
-		// Right
-		1.0,  1.0,  1.0, 1, 1,
-		1.0, -1.0,  1.0, 0, 1,
-		1.0, -1.0, -1.0, 0, 0,
-		1.0,  1.0, -1.0, 1, 0,
+	var modelTexCoordVertexBufferObject = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, modelTexCoordVertexBufferObject);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(modelTexCoords), gl.STATIC_DRAW);
 
-		// Front
-		 1.0,  1.0, 1.0, 1, 1,
-		 1.0, -1.0, 1.0, 1, 0,
-		-1.0, -1.0, 1.0, 0, 0,
-		-1.0,  1.0, 1.0, 0, 1,
+	var modelIndexBufferObject = gl.createBuffer();
+	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, modelIndexBufferObject);
+	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(modelIndices), gl.STATIC_DRAW);
 
-		// Back
-		 1.0,  1.0, -1.0, 0, 0,
-		 1.0, -1.0, -1.0, 0, 1,
-		-1.0, -1.0, -1.0, 1, 1,
-		-1.0,  1.0, -1.0, 1, 0,
-
-		// Bottom
-		-1.0, -1.0, -1.0, 1, 1,
-		-1.0, -1.0,  1.0, 1, 0,
-		 1.0, -1.0,  1.0, 0, 0,
-		 1.0, -1.0, -1.0, 0, 1,
-	];
-
-	var boxIndices =
-	[
-		// Top
-		0, 1, 2,
-		0, 2, 3,
-
-		// Left
-		5, 4, 6,
-		6, 4, 7,
-
-		// Right
-		8, 9, 10,
-		8, 10, 11,
-
-		// Front
-		13, 12, 14,
-		15, 14, 12,
-
-		// Back
-		16, 17, 18,
-		16, 18, 19,
-
-		// Bottom
-		21, 20, 22,
-		22, 20, 23
-	];
-	var boxVertexBufferObject = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferObject);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxVertices), gl.STATIC_DRAW);
-
-	var boxIndexBufferObject = gl.createBuffer();
-	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
-	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(boxIndices), gl.STATIC_DRAW);
-
+	gl.bindBuffer(gl.ARRAY_BUFFER, modelVertexBufferObject);
 	var positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
-	var texCoordAttribLocation = gl.getAttribLocation(program, 'vertTexCoord');
-	
 	gl.vertexAttribPointer(
 		positionAttribLocation,
 		3,
 		gl.FLOAT,
 		gl.FALSE,
-		5 * Float32Array.BYTES_PER_ELEMENT,
+		3 * Float32Array.BYTES_PER_ELEMENT,
 		0
 	);
+	gl.enableVertexAttribArray(positionAttribLocation);
 
+	gl.bindBuffer(gl.ARRAY_BUFFER, modelTexCoordVertexBufferObject);
+	var texCoordAttribLocation = gl.getAttribLocation(program, 'vertTexCoord');
 	gl.vertexAttribPointer(
 		texCoordAttribLocation,
 		2,
 		gl.FLOAT,
 		gl.FALSE,
-		5 * Float32Array.BYTES_PER_ELEMENT,
-		3 * Float32Array.BYTES_PER_ELEMENT
+		2 * Float32Array.BYTES_PER_ELEMENT,
+		0
 	);
-
-	gl.enableVertexAttribArray(positionAttribLocation);
 	gl.enableVertexAttribArray(texCoordAttribLocation);
 
 	//
 	// Create texture
 	//
-	var boxTexture = gl.createTexture();
-	gl.bindTexture(gl.TEXTURE_2D, boxTexture);
+	var objectTexture = gl.createTexture();
+	gl.bindTexture(gl.TEXTURE_2D, objectTexture);
+	gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -238,10 +181,10 @@ var runGl = function(modelObject, imageObject) {
 		gl.clearColor(0.5, 0.5, 0.5, 1.0);
 		gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 
-		gl.bindTexture(gl.TEXTURE_2D, boxTexture);
+		gl.bindTexture(gl.TEXTURE_2D, objectTexture);
 		gl.activeTexture(gl.TEXTURE0);
 
-		gl.drawElements(gl.TRIANGLES, boxIndices.length, gl.UNSIGNED_SHORT, 0);
+		gl.drawElements(gl.TRIANGLES, modelIndices.length, gl.UNSIGNED_SHORT, 0);
 		requestAnimationFrame(loop);
 	};
 	requestAnimationFrame(loop);
