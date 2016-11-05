@@ -1,7 +1,31 @@
-function init() {
+var initWebGL = function() {
+	loadJSONResource('/models/cone.json', function(modelErr, modelObject) {
+		if(modelErr) {
+			alert('Fatal error getting models');
+			console.error(modelErr);
+		}
+		else {
+			// TODO
+			loadImage('texture.png', function(imgErr, imageObject){
+				if(imgErr) {
+					alert('Fatal error getting model textures');
+					console.error(imgErr);
+				}
+				else {
+					runGl(modelObject, imageObject);
+				}
+			});	
+		}
+	});
+};
+
+var runGl = function(modelObject, imageObject) {
 	//
 	// Setup
 	//
+	var model = modelObject;
+	console.log(model);
+
 	var canvas = document.getElementById("canvas");
 	var gl = canvas.getContext('webgl');
 
@@ -169,7 +193,7 @@ function init() {
 	gl.texImage2D(
 		gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,
 		gl.UNSIGNED_BYTE,
-		document.getElementById('box-texture')
+		imageObject
 	);
 	gl.bindTexture(gl.TEXTURE_2D, null);
 
