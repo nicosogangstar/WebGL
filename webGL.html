@@ -21,21 +21,26 @@
         <script id="fragmentshader" type="x-shader">
             precision highp float;
 
+            struct DirectionalLight
+            {
+                vec3 direction;
+                vec3 color;
+            };
+
             varying vec2 fragTexCoord;
             varying vec3 fragNormal;
 
             uniform vec3 ambientLightIntensity;
-            uniform vec3 sunLightIntensity;
-            uniform vec3 sunLightDirection;
+            uniform DirectionalLight sun;
             uniform sampler2D sampler;
 
             void main() {
                 vec3 surfaceNormal = normalize(fragNormal);
-                vec3 sunDirNormal = normalize(sunLightDirection);
+                vec3 sunDirNormal = normalize(sun.direction);
 
                 vec4 texel = texture2D(sampler, fragTexCoord);
                 vec3 lightIntensity = ambientLightIntensity +
-                sunLightIntensity * max(dot(surfaceNormal, sunDirNormal), 0.0);
+                sun.color * max(dot(surfaceNormal, sunDirNormal), 0.0);
 
                 gl_FragColor = vec4(texel.rgb * lightIntensity, texel.a);
             }

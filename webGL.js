@@ -180,13 +180,13 @@ var runGl = function(modelObject, imageObject) {
 	//
 	gl.useProgram(program);
 	var ambientUniformLocation = gl.getUniformLocation(program, 'ambientLightIntensity');
-	var sunIntUniformLocation = gl.getUniformLocation(program, 'sunLightIntensity');
-	var sunDirUniformLocation = gl.getUniformLocation(program, 'sunLightDirection');
+	var sunIntUniformLocation = gl.getUniformLocation(program, 'sun.direction');
+	var sunDirUniformLocation = gl.getUniformLocation(program, 'sun.color');
 	
-	gl.uniform3f(ambientUniformLocation, 0.2, 0.2, 0.2);
+	gl.uniform3f(ambientUniformLocation, 0.4, 0.4, 0.4);
 	gl.uniform3f(sunDirUniformLocation, 3.0, 4.0, -2.0);
 	gl.uniform3f(sunIntUniformLocation, 0.9, 0.9, 0.9);
-	
+
 	//
 	// Main loop
 	//
