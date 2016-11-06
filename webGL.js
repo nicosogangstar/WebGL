@@ -1,4 +1,4 @@
-var objectName = 'cube';
+var objectName = 'monkey';
 
 var initWebGL = function() {
 	loadJSONResource('/models/' + objectName + '.json', function(modelErr, modelObject) {
