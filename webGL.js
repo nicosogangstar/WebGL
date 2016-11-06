@@ -1,12 +1,14 @@
+var objectName = 'cube';
+
 var initWebGL = function() {
-	loadJSONResource('/models/cone.json', function(modelErr, modelObject) {
+	loadJSONResource('/models/' + objectName + '.json', function(modelErr, modelObject) {
 		if(modelErr) {
 			alert('Fatal error getting models');
 			console.error(modelErr);
 		}
 		else {
 			// TODO
-			loadImage('/models/cone.png', function(imgErr, imageObject){
+			loadImage('/models/' + objectName + '.png', function(imgErr, imageObject){
 				if(imgErr) {
 					alert('Fatal error getting model textures');
 					console.error(imgErr);
