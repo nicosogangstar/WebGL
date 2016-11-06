@@ -1,4 +1,4 @@
-var objectName = 'monkey';
+var objectName = 'teapot';
 
 var initWebGL = function() {
 	loadJSONResource('/models/' + objectName + '.json', function(modelErr, modelObject) {
@@ -170,7 +170,7 @@ var runGl = function(modelObject, imageObject) {
 	var viewMatrix = new Float32Array(16);
 	var projMatrix = new Float32Array(16);
 	mat4.identity(worldMatrix);
-	mat4.lookAt(viewMatrix, [0, 0, -7], [0, 0, 0], [0, 1, 0]);
+	mat4.lookAt(viewMatrix, [0, 0, -200], [0, 0, 0], [0, 1, 0]);
 	mat4.perspective(projMatrix, glMatrix.toRadian(45), canvas.width/canvas.height, .1, 1000);
 
 	gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
@@ -186,7 +186,7 @@ var runGl = function(modelObject, imageObject) {
 	var sunDirUniformLocation = gl.getUniformLocation(program, 'sun.color');
 	
 	gl.uniform3f(ambientUniformLocation, 0.4, 0.4, 0.4);
-	gl.uniform3f(sunDirUniformLocation, 3.0, 4.0, -2.0);
+	gl.uniform3f(sunDirUniformLocation, 2.0, 2.0, 2.0);
 	gl.uniform3f(sunIntUniformLocation, 0.9, 0.9, 0.9);
 
 	//
